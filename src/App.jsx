@@ -29,7 +29,8 @@ function App() {
           }
         ></Route>
         <Route path="/login" element={<Login />}></Route>
-        <Route path="/admin/quiz" element={<CreateQuiz />}></Route>
+        <Route path="/admin/quiz" element={<CreateQuiz />}>
+        </Route>
       </Routes>
       {/* <div className="w-screen h-screen bg-transparent flex justify-center items-center ">
         <div className="bg-red-400 w-96 h-96"></div>

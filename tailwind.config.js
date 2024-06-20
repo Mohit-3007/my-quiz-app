@@ -28,5 +28,7 @@ export default {
       quicksand: ["Quicksand", "sans-serif"],
     },
   },
-  plugins: [require("flowbite/plugin")],
+  plugins: [require("flowbite/plugin"),
+    require('tailwind-scrollbar-hide')
+  ],
 };
