@@ -7,10 +7,9 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { useQuizContext } from "../ContextAPI/QuizContextApi";
 import { useNavigate } from "react-router-dom";
 import PreviewQuiz from "../Components/PreviewQuiz";
-import { BsTransparency } from "react-icons/bs";
 
 const CreateQuiz = () => {
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   const [isDown, setIsDown] = useState(false);
   const [content, setContent] = useState("");
   const contentRef = useRef(null);
@@ -34,6 +33,18 @@ const CreateQuiz = () => {
     { id: 4, color: "#D5546D", darkBgColor: "rgb(110,46,58)" },
     { id: 5, color: "#9A4292", darkBgColor: "rgb(80,37,76)" },
   ];
+
+  useEffect(() => {
+    const logTimeWithSeconds = () => {
+      const now = new Date();
+      console.log(now.toLocaleTimeString('en-US', { hour12: false })); // Logs time in hh:mm:ss format
+    };
+    logTimeWithSeconds();
+    setTimeout(() => {
+      setIsLoading(false);
+      logTimeWithSeconds();
+    }, 3000);
+  }, []);
 
   useEffect(() => {
     setSingleQuesData((prev) => ({ ...prev, points: quizPoint }));
@@ -168,6 +179,7 @@ const CreateQuiz = () => {
     localStorage.setItem("QuizLocalData", JSON.stringify(quizLocalData));
     console.log("Qiz added to local storage");
     setQuizObj([]);
+    setTitleReadOnly(false)
 
   }
 
@@ -300,74 +312,86 @@ const CreateQuiz = () => {
                 value={quizHeading}
                 className={"border-none focus:outline-none focus:border-none rounded-md tracking-wider text-xl " 
                   + (titleReadOnly ? 'bg-transparent text-center duration-500 ease-in-out transition-all bg-quiz-200 text-quiz-600 w-40 px-3 py-1 ' 
-                    : 'bg-[#F2F2F2] w-72 duration-500 ease-in-out transition-all px-3 py-1')}
+                    : 'bg-[#F2F2F2] w-72 duration-500 ease-in-out transition-all px-3 py-1 ') + (isLoading ? "skeleton" : " ")}
               />
+        
             </div>
           </header>
 
-          {/* question container */}
+          {/* quiz question container */}
           <section className="w-full h-[calc(100%-48px)] overflow-y-auto bg-[#E5E5E5] px-8 py-4">
             <div className="w-full flex justify-center">
               <div className="w-[1064px] h-[600px] bg-[#461A42] rounded-2xl">
                 <section className="p-4 w-full h-full">
-                  {/* question div */}
-                  <div className="w-full h-[15.3125rem] mb-4">
-                    <div
-                      ref={contentDivRef}
-                      name="parent"
-                      className={
-                        "border rounded-lg h-full flex items-center w-full " +
-                        (divDarkBg === true
-                          ? "bg-[rgb(39,17,37)] border-[rgb(136,84,192)]"
-                          : "border-quiz-400")
-                      }
-                      onClick={handleFocus}
-                    >
-                      <div className="w-full h-fit text-center">
+
+                  {/* loading state */}
+                  {isLoading && (
+                    <div className="w-full h-full skeleton bg-[#461A42] rounded-lg overflow-hidden border border-quiz-400"></div>
+                  )}
+
+                  {!isLoading && (
+                    <>
+                      {/* question div */}
+                      <div className="w-full h-[15.3125rem] mb-4">
                         <div
-                          ref={contentRef}
-                          className="p-2 rounded-md focus:outline-none text-xl font-quicksand text-white "
-                          contentEditable="true"
-                          onClick={() => handleShowPlaceholder()}
-                          onInput={handleInput}
-                          suppressContentEditableWarning={true}
+                          ref={contentDivRef}
+                          name="parent"
+                          className={
+                            "border rounded-lg h-full flex items-center w-full " +
+                            (divDarkBg === true
+                              ? "bg-[rgb(39,17,37)] border-[rgb(136,84,192)]"
+                              : "border-quiz-400")
+                          }
+                          onClick={handleFocus}
                         >
-                          {showPlace === true && (
-                            <div className="p-2 pointer-events-none text-gray-400">
-                              {placeholder}
+                          <div className="w-full h-fit text-center">
+                            <div
+                              ref={contentRef}
+                              className="p-2 rounded-md focus:outline-none text-xl font-quicksand text-white "
+                              contentEditable="true"
+                              onClick={() => handleShowPlaceholder()}
+                              onInput={handleInput}
+                              suppressContentEditableWarning={true}
+                            >
+                              {showPlace === true && (
+                                <div className="p-2 pointer-events-none text-gray-400">
+                                  {placeholder}
+                                </div>
+                              )}
                             </div>
-                          )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
 
-                  {/* options cards container */}
-                  <div className="w-full h-[262px] flex ">
-                    <div className="h-full w-full gap-2 grid md:grid-flow-col md:auto-cols-fr">
-                      {renderCards &&
-                        renderCards.map((e, index) => {
-                          return (
-                            <OptionCard
-                              key={index}
-                              index={index}
-                              colorObj={e}
-                              renderCards={renderCards}
-                              handleDeleteOption={handleDeleteOption}
-                              singleQuesData={singleQuesData}
-                              setSingleQuesData={setSingleQuesData}
-                            />
-                          );
-                        })}
-                    </div>
-                    <div
-                      onClick={handleAddOptionCard}
-                      className={
-                        "w-7 h-full bg-yellow-300 " +
-                        (showAddButton === false ? "hidden" : "block")
-                      }
-                    ></div>
-                  </div>
+                      {/* options cards container */}
+                      <div className="w-full h-[262px] flex ">
+                        <div className="h-full w-full gap-2 grid grid-flow-col auto-cols-fr">
+                          {renderCards &&
+                            renderCards.map((e, index) => {
+                              return (
+                                <OptionCard
+                                  key={index}
+                                  index={index}
+                                  colorObj={e}
+                                  renderCards={renderCards}
+                                  handleDeleteOption={handleDeleteOption}
+                                  singleQuesData={singleQuesData}
+                                  setSingleQuesData={setSingleQuesData}
+                                />
+                              );
+                            })}
+                        </div>
+                        <div
+                          onClick={handleAddOptionCard}
+                          className={
+                            "w-7 h-full bg-yellow-300 " +
+                            (showAddButton === false ? "hidden" : "block")
+                          }
+                        ></div>
+                      </div>
+                    </>
+                  )}
+
                 </section>
               </div>
             </div>

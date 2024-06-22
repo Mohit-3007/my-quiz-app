@@ -6,7 +6,7 @@ export const QuizProvider = ({ children }) => {
   const [quizObj, setQuizObj] = useState([]);
 
   useEffect(() => {
-    console.log("quizObj quizObj ", quizObj);
+    // console.log("quizObj quizObj ", quizObj);
   },[quizObj])
 
   const initialState={

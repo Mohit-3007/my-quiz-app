@@ -5,17 +5,55 @@ const UserLogin = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("")
     const [error, setError] = useState(null)
-
-
     function handleEmail(e){
         setEmail(e.target.value);
     }
 
     function handleLoginUser(e){
         e.preventDefault();
-        console.log("Enter user");
-    }
+        // console.log("Enter user",email, " ", email.length);
+        const usersData = JSON.parse(localStorage.getItem("UsersData")) || [];
+        console.log("usersData ",usersData);
+        if(usersData.length === 0){
+            const userObj = {
+                id: email,
+                email: email,
+                isLogin: true,
+                attemptedQuiz: [],
+                pendingQuiz: []
+            }
+            usersData.push(userObj);
+            localStorage.setItem("UsersData", JSON.stringify(usersData));
+            localStorage.setItem("Login", JSON.stringify(email));
+            return navigate('/user/dashboard')
+        }
+        const isOLdUser = usersData.find( e => {
+            return e.id === email
+        })
+        if(isOLdUser){
+            isOLdUser.isLogin = true;
+            const index = usersData.findIndex(e => {
+                return e.id === email;
+            })
+            usersData.splice(index, 1, isOLdUser);
+            localStorage.setItem("UsersData", JSON.stringify(usersData));
+            localStorage.setItem("Login", JSON.stringify(email));
+            return navigate('/user/dashboard');
 
+        }else if(!isOLdUser){
+            const userObj = {
+                id: email,
+                email: email,
+                isLogin: true,
+                attemptedQuiz: [],
+                pendingQuiz: []
+            }
+            usersData.push(userObj);
+            localStorage.setItem("UsersData", JSON.stringify(usersData));
+            localStorage.setItem("Login", JSON.stringify(email));
+            navigate('/user/dashboard');
+        }
+    }
 
   return (
     <form onSubmit={handleLoginUser} className="w-full px-16 text-center h-full flex flex-col gap-5 py-8 justify-center">

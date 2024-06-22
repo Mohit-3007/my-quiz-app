@@ -4,6 +4,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./Pages/Dashboard";
 import Login from "./Pages/Login";
 import CreateQuiz from "./Pages/CreateQuiz";
+import UserDashboard from "./Pages/UserDashboard";
+import UserQuiz from "./Pages/UserQuiz";
 
 function ProtectedRoute({ children }) {
   let login = false;
@@ -29,12 +31,10 @@ function App() {
           }
         ></Route>
         <Route path="/login" element={<Login />}></Route>
-        <Route path="/admin/quiz" element={<CreateQuiz />}>
-        </Route>
+        <Route path="/admin/quiz" element={<CreateQuiz />}></Route>
+        <Route path="/user/dashboard" element={<UserDashboard />}></Route>
+        <Route path='/user/quiz/:id' element={<UserQuiz />}></Route>
       </Routes>
-      {/* <div className="w-screen h-screen bg-transparent flex justify-center items-center ">
-        <div className="bg-red-400 w-96 h-96"></div>
-      </div> */}
     </>
   );
 }
