@@ -7,6 +7,7 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { useQuizContext } from "../ContextAPI/QuizContextApi";
 import { useNavigate } from "react-router-dom";
 import PreviewQuiz from "../Components/PreviewQuiz";
+import { FaPlus } from "react-icons/fa6";
 
 const CreateQuiz = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -368,7 +369,7 @@ const CreateQuiz = () => {
                       </div>
 
                       {/* options cards container */}
-                      <div className="w-full h-[262px] flex ">
+                      <div className="w-full h-[262px] flex gap-1 ">
                         <div className="h-full w-full gap-2 grid grid-flow-col auto-cols-fr">
                           {renderCards &&
                             renderCards.map((e, index) => {
@@ -385,13 +386,18 @@ const CreateQuiz = () => {
                               );
                             })}
                         </div>
-                        <div
-                          onClick={handleAddOptionCard}
-                          className={
-                            "w-7 h-full bg-yellow-300 " +
-                            (showAddButton === false ? "hidden" : "block")
-                          }
-                        ></div>
+
+                        {showAddButton && (
+                          <div
+                            onClick={handleAddOptionCard}
+                            className={
+                              "w-7 h-full flex items-center justify-center" +
+                              (showAddButton === false ? "hidden" : "block")
+                            }
+                          >
+                            <FaPlus className="text-white cursor-pointer" />
+                          </div>
+                        )}
                       </div>
                     </>
                   )}
@@ -496,10 +502,10 @@ function OptionCard({
     <div
       key={index}
       style={{ backgroundColor: colorObj.color }}
-      className="relative rounded-lg h-full max-h-full overflow-y-auto overflow-x-hidden flex flex-row-reverse md:flex-col gap-2 p-1"
+      className="relative rounded-lg h-full max-h-full overflow-y-hidden overflow-x-hidden p-1"
     >
       {/* header */}
-      <div className="flex flex-col md:flex-row md:justify-between gap-2">
+      <div className="w-full flex justify-between ">
         {/* delete option */}
         <button
           onClick={() => handleDeleteButton()}
