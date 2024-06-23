@@ -39,6 +39,7 @@ const LoginForm = ({ setHeightChange }) => {
 
     if (Object.keys(newErrors).length === 0) {
       console.log("navigate to Admin Page");
+      localStorage.setItem("Login", JSON.stringify(formData.username));
       navigate("/");
     }
 

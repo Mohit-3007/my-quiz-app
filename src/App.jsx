@@ -8,32 +8,33 @@ import UserDashboard from "./Pages/UserDashboard";
 import UserQuiz from "./Pages/UserQuiz";
 
 function ProtectedRoute({ children }) {
-  let login = false;
+  let login = JSON.parse(localStorage.getItem("Login"));
+  console.log("login status ", login);
 
-  if (login) return children;
-  else return <Navigate to={"/login"} />;
+  if (!login) {
+    console.log("null or not logged in");
+    return <Navigate to="/login" />;
+  }
+
+  return children;
 }
-
 
 function App() {
   return (
     <>
-      {/* <div className='w-screen h-screen bg-transparent absolute flex justify-center items-center over '>
-        <div className="bg-red-400 w-96 h-96"></div>
-      </div> */}
       <Routes>
         <Route
           path="/"
           element={
-            // <ProtectedRoute>
-            <Dashboard />
-            // </ProtectedRoute>
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
           }
         ></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/admin/quiz" element={<CreateQuiz />}></Route>
         <Route path="/user/dashboard" element={<UserDashboard />}></Route>
-        <Route path='/user/quiz/:id' element={<UserQuiz />}></Route>
+        <Route path="/user/quiz/:id" element={<UserQuiz />}></Route>
       </Routes>
     </>
   );
