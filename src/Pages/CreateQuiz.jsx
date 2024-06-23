@@ -25,7 +25,13 @@ const CreateQuiz = () => {
   const { quizObj, setQuizObj } = useQuizContext();
   const [openModal, setOpenModal] = useState(false);
   const [titleReadOnly, setTitleReadOnly] = useState(false);
-  const [singleQuesData, setSingleQuesData] = useState({ques: "", options: [], answer: "", answerIdx: null, points: 1,});
+  const [singleQuesData, setSingleQuesData] = useState({
+    ques: "",
+    options: [],
+    answer: "",
+    answerIdx: null,
+    points: 1,
+  });
   const cardColor = [
     { id: 1, color: "#2D70AE", darkBgColor: "rgb(26,60,90)" },
     { id: 2, color: "#2D9DA6", darkBgColor: "rgb(26,82,86)" },
@@ -37,7 +43,7 @@ const CreateQuiz = () => {
   useEffect(() => {
     const logTimeWithSeconds = () => {
       const now = new Date();
-      console.log(now.toLocaleTimeString('en-US', { hour12: false })); // Logs time in hh:mm:ss format
+      console.log(now.toLocaleTimeString("en-US", { hour12: false })); // Logs time in hh:mm:ss format
     };
     logTimeWithSeconds();
     setTimeout(() => {
@@ -62,12 +68,12 @@ const CreateQuiz = () => {
   }, []);
 
   useEffect(() => {
-    if(quizObj[0] !== undefined){
+    if (quizObj[0] !== undefined) {
       setTitleReadOnly(true);
-    }else{
-      setQuizHeading("")
+    } else {
+      setQuizHeading("");
     }
-  },[quizObj])
+  }, [quizObj]);
 
   function handleAddOptionCard() {
     if (nextCardIndex < cardColor.length) {
@@ -114,14 +120,8 @@ const CreateQuiz = () => {
   }
 
   function handleWindowClick(e) {
-    if (!contentDivRef.current.contains(e.target)) {
+    if (!contentDivRef?.current?.contains(e.target)) {
       setDivDarkBg(false);
-      // if(content != "") {
-      //   console.log(content, " in window click");
-      //   setShowPlace(false)
-      // }else{
-      //   setShowPlace(true);
-      // }
     }
   }
   useEffect(() => {
@@ -155,36 +155,41 @@ const CreateQuiz = () => {
     }
     quizObjArr.push(singleQuesData);
     setQuizObj((prev) => [...prev, ...quizObjArr]);
-    setSingleQuesData({ques: "", options: [], answer: "", answerIdx: null, points: 1,});
+    setSingleQuesData({
+      ques: "",
+      options: [],
+      answer: "",
+      answerIdx: null,
+      points: 1,
+    });
     contentRef.current.textContent = "";
     setQuizPoint(1);
     console.log("quiz question data added to context array");
-
   }
 
   function handleSaveQuizToStorage() {
-    const quizLocalData = JSON.parse(localStorage.getItem("QuizLocalData")) || [];
+    const quizLocalData =
+      JSON.parse(localStorage.getItem("QuizLocalData")) || [];
     console.log("quizQuesData.length ", quizLocalData.length);
     const totalPoints = quizObj.reduce((accumulator, currentValue, index) => {
-      if(index == 0) return accumulator;
+      if (index == 0) return accumulator;
       return accumulator + (currentValue.points || 0);
-    },0)
-    const quizLocalObj ={
-      id: quizLocalData.length+1,
+    }, 0);
+    const quizLocalObj = {
+      id: quizLocalData.length + 1,
       title: quizObj[0],
       quizData: quizObj,
-      totalPoints: totalPoints
-    }
+      totalPoints: totalPoints,
+    };
     quizLocalData.push(quizLocalObj);
     localStorage.setItem("QuizLocalData", JSON.stringify(quizLocalData));
     console.log("Qiz added to local storage");
     setQuizObj([]);
-    setTitleReadOnly(false)
-
+    setTitleReadOnly(false);
   }
 
   function handlePoints(point) {
-    setIsDown(false)
+    setIsDown(false);
     setQuizPoint(point);
   }
 
@@ -193,18 +198,18 @@ const CreateQuiz = () => {
     setOpenModal(!openModal);
   }
 
-  function handleTitleInputFocusOut(){
-    if(quizObj[0] != undefined) {
+  function handleTitleInputFocusOut() {
+    if (quizObj[0] != undefined) {
       setTitleReadOnly(true);
-      setQuizObj(prev => {
+      setQuizObj((prev) => {
         const arr = [...prev];
-        arr.splice(0,1,quizHeading);
+        arr.splice(0, 1, quizHeading);
         return arr;
-      })
+      });
     }
   }
 
-  function handleInputDoubleClick(){
+  function handleInputDoubleClick() {
     setTitleReadOnly(false);
   }
 
@@ -220,7 +225,6 @@ const CreateQuiz = () => {
           </button>
 
           <div className="flex items-center gap-2">
-
             {/* question points */}
             <div className="w-[100px] h-8">
               <button
@@ -261,9 +265,7 @@ const CreateQuiz = () => {
             {/* preview Quiz */}
             {quizObj.length > 1 && (
               <div className="w-[100px] h-8" onClick={handlePreviewModal}>
-                <button
-                  className="w-full h-full px-2 flex justify-center items-center gap-1 text-xs rounded-md font-semibold bg-[#F2F2F2]"
-                >
+                <button className="w-full h-full px-2 flex justify-center items-center gap-1 text-xs rounded-md font-semibold bg-[#F2F2F2]">
                   Preview Quiz
                 </button>
               </div>
@@ -310,11 +312,14 @@ const CreateQuiz = () => {
                 type="text"
                 readOnly={titleReadOnly}
                 value={quizHeading}
-                className={"border-none focus:outline-none focus:border-none rounded-md tracking-wider text-xl " 
-                  + (titleReadOnly ? 'bg-transparent text-center duration-500 ease-in-out transition-all bg-quiz-200 text-quiz-600 w-40 px-3 py-1 ' 
-                    : 'bg-[#F2F2F2] w-72 duration-500 ease-in-out transition-all px-3 py-1 ') + (isLoading ? "skeleton" : " ")}
+                className={
+                  "border-none focus:outline-none focus:border-none rounded-md tracking-wider text-xl " +
+                  (titleReadOnly
+                    ? "bg-transparent text-center duration-500 ease-in-out transition-all bg-quiz-200 text-quiz-600 w-40 px-3 py-1 "
+                    : "bg-[#F2F2F2] w-72 duration-500 ease-in-out transition-all px-3 py-1 ") +
+                  (isLoading ? "skeleton" : " ")
+                }
               />
-        
             </div>
           </header>
 
@@ -323,7 +328,6 @@ const CreateQuiz = () => {
             <div className="w-full flex justify-center">
               <div className="w-[1064px] h-[600px] bg-[#461A42] rounded-2xl">
                 <section className="p-4 w-full h-full">
-
                   {/* loading state */}
                   {isLoading && (
                     <div className="w-full h-full skeleton bg-[#461A42] rounded-lg overflow-hidden border border-quiz-400"></div>
@@ -391,17 +395,14 @@ const CreateQuiz = () => {
                       </div>
                     </>
                   )}
-
                 </section>
               </div>
             </div>
           </section>
-        </main> 
+        </main>
 
         {/* Preview Quiz Modal */}
-        {openModal && (
-          <PreviewQuiz handlePreviewModal={handlePreviewModal} />
-        )}
+        {openModal && <PreviewQuiz handlePreviewModal={handlePreviewModal} />}
       </div>
     </>
   );

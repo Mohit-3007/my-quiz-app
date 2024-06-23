@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
+import ResultModal from "../Components/ResultModal";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
   const [localQuizData, setLocalQuizData] = useState();
+  const [userObject, setUserObject] = useState();
+  const [showQuizScore, setShowQuizScore] = useState(false);
+  const [quizId, setQuizId] = useState();
 
   useEffect(() => {
     const localData = JSON.parse(localStorage.getItem("QuizLocalData")) || [];
     setLocalQuizData(localData);
+  }, []);
+
+  useEffect(() => {
+    const usersData = JSON.parse(localStorage.getItem("UsersData"));
+    const loginUser = JSON.parse(localStorage.getItem("Login"));
+    const userObj = usersData.find((e) => {
+      return e.id === loginUser;
+    });
+    setUserObject(userObj);
   }, []);
 
   useEffect(() => {
@@ -22,11 +35,11 @@ const UserDashboard = () => {
     usersData.forEach((user) => {
       if (user.id === loginUser) {
         data.lastAttempt = 0;
-        data.totalQuestion = data.quizData.length - 1;
+        data.totalQuestion = data?.quizData.length - 1;
         const pendingQuizs = user?.pendingQuiz;
         if (pendingQuizs.length > 0) {
           const isPresent = pendingQuizs.find((e) => {
-            return e.id === data.id;
+            return e?.id === data?.id;
           });
           if (!isPresent) pendingQuizs.push(data);
           return;
@@ -41,6 +54,15 @@ const UserDashboard = () => {
   function handleLogout() {
     localStorage.removeItem("Login");
     navigate("/login");
+  }
+
+  function handleViewScore(data, index) {
+    setQuizId(data?.id);
+    setShowQuizScore(true);
+  }
+
+  function handleCloseResultModal() {
+    setShowQuizScore(false);
   }
 
   return (
@@ -62,7 +84,7 @@ const UserDashboard = () => {
       </nav>
 
       {/* main */}
-      <section className="w-full h-[calc(100vh-112px)] overflow-x-hidden overflow-y-auto bg-quiz-500 p-10">
+      <section className="w-full h-[calc(100vh-112px)] overflow-x-hidden overflow-y-auto scrollbar-hide bg-quiz-500 p-10">
         <div className="flex flex-col items-center justify-center mx-auto">
           <h1 className="text-4xl font-semibold tracking-wider font-quicksand w-full text-center text-white">
             Welcome to Your
@@ -74,6 +96,7 @@ const UserDashboard = () => {
           >
             Select a Quiz to Begin Your Journey
           </p>
+
           <table className="w-3/4 text-black bg-[#E5E5E5] rounded-xl overflow-hidden">
             <thead className="w-full font-poppins tracking-wide text-corn-600 border-b border-black border-opacity-50 shadow-sm">
               <tr>
@@ -96,12 +119,13 @@ const UserDashboard = () => {
                       </td>
                       <td className="py-3 text-xl">{data.totalPoints}</td>
                       <td className="py-3 text-xl cursor-pointer">
-                        <button
-                          onClick={() => handleTakeQuiz(data, index)}
-                          className="px-2 py-1 bg-corn-100 rounded-md duration-300 ease-linear hover:scale-110"
-                        >
-                          Take Quiz
-                        </button>
+                        <RenderActionButton
+                          index={index}
+                          data={data}
+                          userObject={userObject}
+                          handleTakeQuiz={handleTakeQuiz}
+                          handleViewScore={handleViewScore}
+                        />
                       </td>
                     </tr>
                   );
@@ -110,8 +134,73 @@ const UserDashboard = () => {
           </table>
         </div>
       </section>
+
+      {/* quiz View/Result Modal  */}
+      {showQuizScore && (
+        <ResultModal
+          viewScore={true}
+          onClose={handleCloseResultModal}
+          quizId={quizId}
+        />
+      )}
     </div>
   );
 };
+
+function RenderActionButton({
+  index,
+  data,
+  userObject,
+  handleTakeQuiz,
+  handleViewScore,
+}) {
+  const [takeQuiz, setTakeQuiz] = useState(false);
+  const [continueQuiz, setContinueQuiz] = useState(false);
+  const [viewScore, setViewScore] = useState(false);
+
+  useEffect(() => {
+    const isPending = userObject.pendingQuiz.find((e) => {
+      return e?.id === data?.id;
+    });
+    if (isPending) return setContinueQuiz(true);
+
+    const isAttempted = userObject?.attemptedQuiz.find((e) => {
+      return e?.id === data?.id;
+    });
+    if (isAttempted) return setViewScore(true);
+    setTakeQuiz(true);
+  }, []);
+
+  return (
+    <>
+      {takeQuiz && (
+        <button
+          onClick={() => handleTakeQuiz(data, index)}
+          className="px-2 py-1 bg-corn-100 rounded-md duration-300 ease-linear hover:scale-110"
+        >
+          Take Quiz
+        </button>
+      )}
+
+      {continueQuiz && (
+        <button
+          onClick={() => handleTakeQuiz(data, index)}
+          className="px-2 py-1 bg-corn-100 rounded-md duration-300 ease-linear hover:scale-110"
+        >
+          Continue Quiz
+        </button>
+      )}
+
+      {viewScore && (
+        <button
+          onClick={() => handleViewScore(data, index)}
+          className="px-2 py-1 bg-corn-100 rounded-md duration-300 ease-linear hover:scale-110"
+        >
+          View Score
+        </button>
+      )}
+    </>
+  );
+}
 
 export default UserDashboard;

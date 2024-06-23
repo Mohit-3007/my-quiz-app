@@ -6,28 +6,32 @@ const Login = () => {
   const [tab, setTab] = useState("admin");
   const [contentHeight, setContentHeight] = useState("0px");
   const contentRef = useRef(null);
+  const [heightChange, setHeightChange] = useState(true);
 
   useEffect(() => {
     if (contentRef.current) {
       setContentHeight(`${contentRef.current.scrollHeight}px`);
     }
-  }, [tab]);
+  }, [tab, heightChange]);
 
   // console.log("contentHeight ,", contentHeight)
 
   return (
-    <div className="bg-slate-500 w-screen h-screen flex justify-center items-center">
+    <div className="bg-quiz-100 w-screen h-screen flex justify-center items-center">
       <div
-        className="w-96 h-fit bg-zinc-300 rounded-md overflow-hidden shadow-lg
-       shadow-zinc-900 box-content"
+        className="w-96 h-fit bg-[#E5E5E5] rounded-md overflow-hidden shadow-lg
+       shadow-quiz-700 box-content"
       >
-        <div className="relative mx-auto w-full flex border-b-2 border-black border-solid shadow-xl  divide-x-2 divide-slate-600">
+        <div
+          className="relative mx-auto w-full flex border-b-2 border-quiz-600 border-solid 
+          shadow-xl  divide-x-2 divide-quiz-400"
+        >
           <button
             className={
               "w-1/2 flex justify-center items-end text-3xl pt-4 pb-[1px] " +
-              "hover:bg-slate-600 hover:text-slate-300 hover:tracking-wider hover:scale-110 " +
-              "duration-500 hover:shadow-2xl hover:shadow-slate-600 hover:-ml-[-10px] " +
-              (tab === "admin" ? "bg-slate-600 text-slate-300" : "")
+              "hover:bg-quiz-400 hover:text-white hover:tracking-wider hover:scale-110 " +
+              "duration-500 hover:shadow-2xl hover:shadow-quiz-400 hover:-ml-[-8px] " +
+              (tab === "admin" ? "bg-quiz-400 text-white" : "")
             }
             onClick={() => setTab("admin")}
           >
@@ -36,9 +40,9 @@ const Login = () => {
           <button
             className={
               "w-1/2 flex justify-center items-end text-3xl pt-4 pb-[1px] " +
-              "hover:bg-slate-600 hover:text-slate-300 hover:tracking-wider hover:scale-110 " +
-              "duration-500 hover:shadow-2xl hover:shadow-slate-600 hover:-ml-[-10px] " +
-              (tab === "user" ? "bg-slate-600 text-slate-300" : "")
+              "hover:bg-quiz-400 hover:text-white hover:tracking-wider hover:scale-110 " +
+              "duration-500 hover:shadow-2xl hover:shadow-quiz-400 hover:-ml-[-8px] " +
+              (tab === "user" ? "bg-quiz-400 text-white" : "")
             }
             onClick={() => setTab("user")}
           >
@@ -46,12 +50,17 @@ const Login = () => {
           </button>
         </div>
 
-        <div className={`transition-all duration-700 ease-in-out  `}
+        <div
+          className={`transition-all duration-700 ease-in-out h-fit max-h-fit `}
           style={{ maxHeight: contentHeight, minHeight: contentHeight }}
-          >
-            <div ref={contentRef}>
-              {tab === "admin" ? <AdminLogin /> : <UserLogin />}
-            </div>
+        >
+          <div ref={contentRef}>
+            {tab === "admin" ? (
+              <AdminLogin setHeightChange={setHeightChange} />
+            ) : (
+              <UserLogin setHeightChange={setHeightChange} />
+            )}
+          </div>
         </div>
       </div>
     </div>
