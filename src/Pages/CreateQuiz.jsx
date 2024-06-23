@@ -10,6 +10,7 @@ import PreviewQuiz from "../Components/PreviewQuiz";
 import { FaPlus } from "react-icons/fa6";
 
 const CreateQuiz = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isDown, setIsDown] = useState(false);
   const [content, setContent] = useState("");
@@ -221,7 +222,10 @@ const CreateQuiz = () => {
         {/* header */}
         <header className="py-2 px-4 flex items-center justify-between">
           {/* back button */}
-          <button className="w-8 h-8 flex justify-center items-center bg-[#F2F2F2]">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-8 h-8 flex justify-center items-center rounded-sm bg-[#F2F2F2]"
+          >
             <IoChevronBackSharp />
           </button>
 

@@ -97,41 +97,50 @@ const UserDashboard = () => {
             Select a Quiz to Begin Your Journey
           </p>
 
-          <table className="w-3/4 text-black bg-[#E5E5E5] rounded-xl overflow-hidden">
-            <thead className="w-full font-poppins tracking-wide text-corn-600 border-b border-black border-opacity-50 shadow-sm">
-              <tr>
-                <th className="py-2 px-2 text-2xl">Sr no.</th>
-                <th className="py-2 px-2 text-2xl">Quiz Title</th>
-                <th className="py-2 px-2 text-2xl">Questions</th>
-                <th className="py-2 px-2 text-2xl">Total Points</th>
-                <th className="py-2 px-2 text-2xl"></th>
-              </tr>
-            </thead>
-            <tbody className="font-poppins">
-              {localQuizData &&
-                localQuizData.map((data, index) => {
-                  return (
-                    <tr key={index} className="text-center hover:bg-quiz-300">
-                      <td className="py-3 text-xl">{index + 1}</td>
-                      <td className="py-3 text-xl">{data?.title}</td>
-                      <td className="py-3 text-xl">
-                        {data.quizData.length - 1}
-                      </td>
-                      <td className="py-3 text-xl">{data.totalPoints}</td>
-                      <td className="py-3 text-xl cursor-pointer">
-                        <RenderActionButton
-                          index={index}
-                          data={data}
-                          userObject={userObject}
-                          handleTakeQuiz={handleTakeQuiz}
-                          handleViewScore={handleViewScore}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
+          {localQuizData?.length === 0 && (
+            <div className="w-full h-24 text-corn-700 text-3xl font-semibold tracking-wider font-poppins text-center py-24">
+              Ooops!! There is no Quizes to show. Ask Admin to create a new
+              Quiz....
+            </div>
+          )}
+
+          {localQuizData?.length > 0 && (
+            <table className="w-3/4 text-black bg-[#E5E5E5] rounded-xl overflow-hidden">
+              <thead className="w-full font-poppins tracking-wide text-corn-600 border-b border-black border-opacity-50 shadow-sm">
+                <tr>
+                  <th className="py-2 px-2 text-2xl">Sr no.</th>
+                  <th className="py-2 px-2 text-2xl">Quiz Title</th>
+                  <th className="py-2 px-2 text-2xl">Questions</th>
+                  <th className="py-2 px-2 text-2xl">Total Points</th>
+                  <th className="py-2 px-2 text-2xl"></th>
+                </tr>
+              </thead>
+              <tbody className="font-poppins">
+                {localQuizData &&
+                  localQuizData.map((data, index) => {
+                    return (
+                      <tr key={index} className="text-center hover:bg-quiz-300">
+                        <td className="py-3 text-xl">{index + 1}</td>
+                        <td className="py-3 text-xl">{data?.title}</td>
+                        <td className="py-3 text-xl">
+                          {data.quizData.length - 1}
+                        </td>
+                        <td className="py-3 text-xl">{data.totalPoints}</td>
+                        <td className="py-3 text-xl cursor-pointer">
+                          <RenderActionButton
+                            index={index}
+                            data={data}
+                            userObject={userObject}
+                            handleTakeQuiz={handleTakeQuiz}
+                            handleViewScore={handleViewScore}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          )}
         </div>
       </section>
 
